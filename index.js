@@ -104,15 +104,13 @@ exports.add = async (jobPath, executionDate, options = {}) => {
 async function handler(options) {
   const tasks = await getTasks()
 
-  if (!tasks) return
+  if (!tasks.length) return
 
   const high = []
   const middle = []
   const low = []
 
   for (const task of tasks) {
-    if (!isAfter(new Date(), new Date(task.executionDate))) continue
-
     if (task.options.priority) {
       switch (task.options.priority) {
         case 'high':
@@ -148,12 +146,12 @@ async function handler(options) {
 
 /**
  * GET-TASKS
- * @returns {Promise<Array<Object>|void>}
+ * @returns {Promise<{jobPath: string, executionDate: string, options: {args?: Array, deletePrev?: boolean, label?: string, priority: ("high"|"middle"|"low")}, key: string, inWork: boolean}[]|[]>}
  */
 async function getTasks() {
   const keys = await redis.keys(scheduler.prefixInRedis + '*')
 
-  if (!keys.length) return
+  if (!keys.length) return []
 
   return await new Promise((resolve, reject) => {
     redis.client.mget(keys, async (err, res) => {
@@ -164,19 +162,21 @@ async function getTasks() {
         for (const item of res) {
           const task = JSON.parse(item)
 
-          if (!task.inWork) {
+          if (!task.inWork && isAfter(new Date(), new Date(task.executionDate))) {
             task.inWork = true
 
             result.set(task.key, task)
           }
         }
 
-        await new Promise((resolve, reject) => {
-          redis.client.mset([...result].map(([key, value]) => [key, JSON.stringify(value)]).flat(), (err, res) => {
-            if (err) reject(err)
-            else resolve(res)
+        if (result.size) {
+          await new Promise((resolve, reject) => {
+            redis.client.mset([...result].map(([key, value]) => [key, JSON.stringify(value)]).flat(), (err, res) => {
+              if (err) reject(err)
+              else resolve(res)
+            })
           })
-        })
+        }
 
         resolve([...result.values()])
       }
@@ -195,7 +195,7 @@ async function executor(options, task) {
     if (options.logging) console.log(msg)
   }
 
-  const job = require(options.jobDir + task.jobPath)
+  const job = require(path.resolve(options.jobDir, task.jobPath))
 
   try {
     await job(...(task.options.args || []))
