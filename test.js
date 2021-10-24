@@ -8,7 +8,7 @@ void (async () => {
     jobDir: __dirname + '/jobs'
   })
 
-  console.log(id)
+  // console.log(id)
 
   const key = await scheduler.add('test', addSeconds(new Date(), 2).toString(), {
     args: [6, 5, 4, 1500],
@@ -17,7 +17,7 @@ void (async () => {
     priority: 'low'
   })
 
-  console.log(key)
+  // console.log(key)
 
   await scheduler.add('test', addSeconds(new Date(), 2).toString(), {
     args: [4, 3, 2, 3000],
@@ -35,5 +35,5 @@ void (async () => {
 
   const keys = await redis.keys('*')
 
-  console.log(keys)
+  // console.log(keys)
 })()
