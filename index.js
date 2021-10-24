@@ -11,6 +11,35 @@ const scheduler = {
 }
 
 /**
+ * START
+ * @param options {{jobDir?: string, interval?: number, logging?: boolean}}
+ */
+exports.start = (options = {}) => {
+  if (!options || options.__proto__ !== Object.prototype) {
+    throw Error('"options" must be an object')
+  }
+
+  options = merge.recursive(
+    {
+      jobDir: scheduler.jobDir,
+      interval: scheduler.interval,
+      logging: true
+    },
+    options
+  )
+
+  if (!options.jobDir || typeof options.jobDir !== 'string') {
+    throw Error('"jobDir" is required and must be a string')
+  }
+
+  if (typeof options.interval !== 'number' || isNaN(options.interval)) {
+    throw Error('"interval" is required and must be a number')
+  }
+
+  setInterval(() => handler(options), options.interval)
+}
+
+/**
  * ADD
  * @param jobPath {string}
  * @param executionDate {string}
@@ -52,35 +81,6 @@ exports.add = async (jobPath, executionDate, options = {}) => {
       inWork: false
     })
   )
-}
-
-/**
- * START
- * @param options {{jobDir?: string, interval?: number, logging?: boolean}}
- */
-exports.start = (options = {}) => {
-  if (!options || options.__proto__ !== Object.prototype) {
-    throw Error('"options" must be an object')
-  }
-
-  options = merge.recursive(
-    {
-      jobDir: scheduler.jobDir,
-      interval: scheduler.interval,
-      logging: true
-    },
-    options
-  )
-
-  if (!options.jobDir || typeof options.jobDir !== 'string') {
-    throw Error('"jobDir" is required and must be a string')
-  }
-
-  if (typeof options.interval !== 'number' || isNaN(options.interval)) {
-    throw Error('"interval" is required and must be a number')
-  }
-
-  setInterval(() => handler(options), options.interval)
 }
 
 /**
