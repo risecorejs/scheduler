@@ -8,27 +8,32 @@ void (async () => {
     jobDir: __dirname + '/jobs'
   })
 
-  // console.log(id)
+  console.log(id)
 
-  await scheduler.add('test', addSeconds(new Date(), 6).toString(), {
-    args: [6, 5, 4],
+  const key = await scheduler.add('test', addSeconds(new Date(), 2).toString(), {
+    args: [6, 5, 4, 1500],
     deletePrev: true,
-    label: 'test_6'
+    label: 'test_6',
+    priority: 'low'
   })
 
-  await scheduler.add('test', addSeconds(new Date(), 4).toString(), {
-    args: [4, 3, 2],
+  console.log(key)
+
+  await scheduler.add('test', addSeconds(new Date(), 2).toString(), {
+    args: [4, 3, 2, 3000],
     deletePrev: true,
-    label: 'test_4'
+    label: 'test_4',
+    priority: 'middle'
   })
 
   await scheduler.add('test', addSeconds(new Date(), 2).toString(), {
-    args: [2, 1, 0],
+    args: [2, 1, 0, 9000],
     deletePrev: true,
-    label: 'test_2'
+    label: 'test_2',
+    priority: 'high'
   })
 
-  const keys = await redis.keys()
+  const keys = await redis.keys('*')
 
   console.log(keys)
 })()

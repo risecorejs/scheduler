@@ -160,6 +160,8 @@ async function getTasks() {
         const result = new Map()
 
         for (const item of res) {
+          if (!item) continue
+
           const task = JSON.parse(item)
 
           if (!task.inWork && isAfter(new Date(), new Date(task.executionDate))) {
