@@ -56,6 +56,16 @@ exports.add = async (jobPath, executionDate, options = {}) => {
     throw Error('"executionDate" is required and must be a string')
   }
 
+  if (options.label) {
+    if (typeof options.label !== 'string') {
+      throw Error('"label" must be an string')
+    } else if (options.label.match(/([<>:"\/\\|?*])/)) {
+      throw Error('"label" must not contain the following characters: \\ /: *? "<> |')
+    }
+
+    options.label = options.label.replaceAll(' ', '_')
+  }
+
   const keyStart = scheduler.prefixInRedis + jobPath
 
   if (options.deletePrev) {
@@ -92,15 +102,13 @@ exports.add = async (jobPath, executionDate, options = {}) => {
  * @returns {Promise<void>}
  */
 async function handler(options) {
-  const keys = await redis.keys(scheduler.prefixInRedis + '*')
+  const tasks = await getTasks()
 
-  if (!keys.length) return
+  if (!tasks) return
 
   const high = []
   const middle = []
   const low = []
-
-  const tasks = await getTasks()
 
   for (const task of tasks) {
     if (!isAfter(new Date(), new Date(task.executionDate))) continue
@@ -140,9 +148,13 @@ async function handler(options) {
 
 /**
  * GET-TASKS
- * @returns {Promise<Array<Object>>}
+ * @returns {Promise<Array<Object>|void>}
  */
 async function getTasks() {
+  const keys = await redis.keys(scheduler.prefixInRedis + '*')
+
+  if (!keys.length) return
+
   return await new Promise((resolve, reject) => {
     redis.client.mget(keys, async (err, res) => {
       if (err) reject(err)
@@ -160,7 +172,7 @@ async function getTasks() {
         }
 
         await new Promise((resolve, reject) => {
-          redis.client.mset([...result].flat(), (err, res) => {
+          redis.client.mset([...result].map(([key, value]) => [key, JSON.stringify(value)]).flat(), (err, res) => {
             if (err) reject(err)
             else resolve(res)
           })
