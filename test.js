@@ -12,8 +12,8 @@ void (async () => {
 
   const key = await scheduler.add('test', addSeconds(new Date(), 2).toString(), {
     args: [6, 5, 4, 1500],
-    deletePrev: true,
-    label: 'test_6',
+    // deletePrev: true,
+    // label: 'test_6',
     priority: 'low'
   })
 
@@ -22,7 +22,7 @@ void (async () => {
   await scheduler.add('test', addSeconds(new Date(), 2).toString(), {
     args: [4, 3, 2, 3000],
     deletePrev: true,
-    label: 'test_4',
+    label: 'test 4',
     priority: 'middle'
   })
 
