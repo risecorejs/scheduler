@@ -23,6 +23,7 @@
     "prettier": "^2.4.1"
   },
   "dependencies": {
+    "@risecorejs/helpers": "^1.0.1",
     "@risecorejs/redis": "^1.0.1",
     "date-fns": "^2.25.0",
     "merge": "^2.1.1"

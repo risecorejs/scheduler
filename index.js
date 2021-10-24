@@ -1,12 +1,13 @@
+const env = require('@risecorejs/helpers/lib/env')
 const path = require('path')
 const redis = require('@risecorejs/redis')()
-const { isAfter } = require('date-fns')
 const merge = require('merge')
+const { isAfter } = require('date-fns')
 
 const scheduler = {
-  prefixInRedis: process.env.SCHEDULER_PREFIX_IN_REDIS || '@risecorejs/scheduler_',
-  interval: process.env.SCHEDULER_INTERVAL || 1000,
-  jobDir: process.env.SCHEDULER_JOB_DIR || path.resolve('jobs')
+  prefixInRedis: env('SCHEDULER_PREFIX_IN_REDIS', '@risecorejs/scheduler_'),
+  interval: env('SCHEDULER_INTERVAL', 1000),
+  jobDir: env('SCHEDULER_JOB_DIR', path.resolve('jobs'))
 }
 
 /**
