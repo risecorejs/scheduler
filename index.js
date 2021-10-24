@@ -13,6 +13,7 @@ const scheduler = {
 /**
  * START
  * @param options {{jobDir?: string, interval?: number, logging?: boolean}}
+ * @return {Promise<number>}
  */
 exports.start = (options = {}) => {
   if (!options || options.__proto__ !== Object.prototype) {
@@ -36,7 +37,7 @@ exports.start = (options = {}) => {
     throw Error('"interval" is required and must be a number')
   }
 
-  setInterval(() => handler(options), options.interval)
+  return setInterval(() => handler(options), options.interval)
 }
 
 /**
@@ -44,7 +45,7 @@ exports.start = (options = {}) => {
  * @param jobPath {string}
  * @param executionDate {string}
  * @param options {{args?: Array, deletePrev?: boolean, label?: string, priority: ("high"|"middle"|"low")}}
- * @returns {Promise<void>}
+ * @returns {Promise<string>}
  */
 exports.add = async (jobPath, executionDate, options = {}) => {
   if (!jobPath || typeof jobPath !== 'string') {
@@ -81,6 +82,8 @@ exports.add = async (jobPath, executionDate, options = {}) => {
       inWork: false
     })
   )
+
+  return key
 }
 
 /**
