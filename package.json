@@ -1,0 +1,30 @@
+{
+  "name": "@risecorejs/scheduler",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/risecorejs/scheduler.git"
+  },
+  "keywords": [
+    "scheduler"
+  ],
+  "author": "Amenov Abdulsalam <risecorejs@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/risecorejs/scheduler/issues"
+  },
+  "homepage": "https://github.com/risecorejs/scheduler#readme",
+  "devDependencies": {
+    "prettier": "^2.4.1"
+  },
+  "dependencies": {
+    "@risecorejs/redis": "^1.0.1",
+    "date-fns": "^2.25.0",
+    "merge": "^2.1.1"
+  }
+}
