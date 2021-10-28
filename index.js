@@ -153,7 +153,7 @@ async function getTasks() {
 
   if (!keys.length) return []
 
-  return await new Promise((resolve, reject) => {
+  return new Promise((resolve, reject) => {
     redis.client.mget(keys, async (err, res) => {
       if (err) reject(err)
       else {
