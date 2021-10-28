@@ -209,5 +209,5 @@ async function executor(options, task) {
     console.log(err)
   }
 
-  await redis.del(task.key, false)
+  await redis.del(task.key)
 }
