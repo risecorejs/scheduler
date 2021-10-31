@@ -173,10 +173,13 @@ async function getTasks() {
 
         if (result.size) {
           await new Promise((resolve, reject) => {
-            redis.client.mset([...result].map(([key, value]) => [key, JSON.stringify(value)]).flat(), (err, res) => {
-              if (err) reject(err)
-              else resolve(res)
-            })
+            redis.client.mset(
+              [...result].map(([key, value]) => [redis.keyMutation(key), JSON.stringify(value)]).flat(),
+              (err, res) => {
+                if (err) reject(err)
+                else resolve(res)
+              }
+            )
           })
         }
 

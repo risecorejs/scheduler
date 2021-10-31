@@ -3,36 +3,53 @@ const redis = require('@risecorejs/redis')()
 
 const scheduler = require('./index')
 
+process.env.REDIS_PREFIX = 'szs'
 
 void (async () => {
   const id = scheduler.start({
-    jobDir: __dirname + '/jobs',
+    jobDir: __dirname + '/jobs'
   })
 
-  console.log(id)
-
-  const key = await scheduler.add('test', addSeconds(new Date(), 2).toString(), {
-    args: [6, 5, 4, 1500],
-    priority: 'low'
-  })
-
-  console.log(key)
+  // console.log(id)
+  //
+  // const key = await scheduler.add('test', addSeconds(new Date(), 2).toString(), {
+  //   args: [6, 5, 4, 1500],
+  //   priority: 'low'
+  // })
+  //
+  // console.log(key)
 
   await scheduler.add('test', addSeconds(new Date(), 2).toString(), {
     args: [4, 3, 2, 3000],
     deletePrev: true,
-    label: 'test 4',
-    priority: 'middle'
+    label: 'test 4'
+    // priority: 'middle'
   })
 
   await scheduler.add('test', addSeconds(new Date(), 2).toString(), {
-    args: [2, 1, 0, 9000],
+    args: [4, 3, 2, 2000],
     deletePrev: true,
-    label: 'test_2',
-    priority: 'high'
+    label: 'test 4'
+    // priority: 'middle'
   })
 
-  const keys = await redis.keys('*@risecorejs/scheduler_*')
+  await scheduler.add('test', addSeconds(new Date(), 2).toString(), {
+    args: [4, 3, 2, 1000],
+    deletePrev: true,
+    label: 'test 4'
+    // priority: 'middle'
+  })
 
-  console.log(keys)
+  // console.log(key)
+
+  // await scheduler.add('test', addSeconds(new Date(), 2).toString(), {
+  //   args: [2, 1, 0, 9000],
+  //   deletePrev: true,
+  //   label: 'test_2',
+  //   priority: 'high'
+  // })
+
+  // const keys = await redis.keys('*')
+  //
+  // console.log(keys)
 })()
