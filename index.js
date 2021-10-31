@@ -197,9 +197,9 @@ async function executor(options, task) {
     if (options.logging) console.log(msg)
   }
 
-  const job = require(path.resolve(options.jobDir, task.jobPath))
-
   try {
+    const job = require(path.resolve(options.jobDir, task.jobPath))
+
     await job(...(task.options.args || []))
 
     logging('Job finished: ' + task.key)
